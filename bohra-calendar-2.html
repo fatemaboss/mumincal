@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Bohra Misri Calendar</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:system-ui,sans-serif;background:#0d1117;color:#e6edf3;padding:20px;min-height:100vh;}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  .col{display:flex;flex-direction:column;gap:16px;}
+  .card{background:#161b22;border:1px solid #30363d;border-radius:12px;padding:16px;}
+  .lbl{font-size:10px;color:#8b949e;text-transform:uppercase;letter-spacing:.06em;font-weight:600;margin-bottom:5px;}
+  .big{font-size:40px;font-weight:600;color:#e6edf3;line-height:1;}
+  .sub{font-size:17px;color:#8b949e;margin-top:3px;}
+  .sm{font-size:12px;color:#6e7681;margin-top:6px;}
+  .dv{height:1px;background:#21262d;margin:12px 0;}
+  .stats{display:flex;gap:24px;}
+  .sv{font-size:22px;font-weight:600;color:#e6edf3;}
+  .pt{height:5px;background:#21262d;border-radius:3px;margin-top:10px;overflow:hidden;}
+  .pf{height:100%;background:#238636;border-radius:3px;}
+  .clk{font-size:22px;font-weight:600;color:#e6edf3;}
+  .wp{display:inline-block;font-size:10px;padding:3px 10px;border-radius:20px;background:#21262d;color:#8b949e;margin-top:4px;}
+  .mt{font-size:14px;font-weight:600;color:#e6edf3;margin-bottom:10px;}
+  .cal{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;}
+  .dw{text-align:center;font-size:9px;color:#6e7681;padding:4px 0;}
+  .dc{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:38px;border-radius:6px;}
+  .dc .g{font-size:12px;color:#e6edf3;}
+  .dc .h{font-size:8px;color:#6e7681;line-height:1;margin-top:2px;}
+  .dc.today{background:#238636;}
+  .dc.today .g{color:#fff;font-weight:600;}
+  .dc.today .h{color:rgba(255,255,255,.6);}
+  .dc.miq::after{content:'';display:block;width:3px;height:3px;border-radius:50%;background:#d29922;margin-top:1px;}
+  .dc.today.miq::after{background:rgba(255,255,255,.7);}
+  .nr{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid #21262d;}
+  .nr:last-child{border-bottom:none;padding-bottom:0;}
+  .nr:first-child{padding-top:0;}
+  .nn{font-size:12px;color:#8b949e;}
+  .nt{font-size:12px;font-weight:600;color:#e6edf3;}
+  .mi{padding:7px 0;border-bottom:1px solid #21262d;}
+  .mi:last-child{border-bottom:none;padding-bottom:0;}
+  .mi:first-child{padding-top:0;}
+  .mw{font-size:10px;color:#6e7681;}
+  .mn{font-size:12px;font-weight:600;color:#e6edf3;margin:2px 0;}
+  .mb{display:inline-block;font-size:9px;padding:1px 7px;border-radius:3px;background:#2d2200;color:#d29922;}
+  .mb.eid{background:#0d2119;color:#3fb950;}
+  .mb.milad{background:#1a1f2e;color:#58a6ff;}
+  .ni2{font-size:11px;color:#e6edf3;padding:5px 8px;background:#21262d;border-radius:5px;margin-bottom:5px;border-left:3px solid #238636;display:flex;justify-content:space-between;align-items:center;}
+  .empty{font-size:11px;color:#6e7681;font-style:italic;}
+  input[type=text]{background:#21262d;border:1px solid #30363d;border-radius:6px;color:#e6edf3;padding:6px 10px;font-size:12px;width:100%;outline:none;}
+  input[type=text]:focus{border-color:#388bfd;}
+  button{background:#21262d;border:1px solid #30363d;border-radius:6px;color:#e6edf3;padding:4px 12px;font-size:11px;cursor:pointer;}
+  button:hover{background:#30363d;}
+  .br{display:flex;gap:6px;margin-top:6px;}
+</style>
+</head>
+<body>
+<div class="grid">
+  <div class="col">
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+        <div>
+          <div class="lbl">Hijri Date · Bohra Misri</div>
+          <div class="big" id="hd">—</div>
+          <div class="sub" id="hy">—</div>
+          <div class="sm" id="gf">—</div>
+        </div>
+        <div style="text-align:right">
+          <div class="clk" id="clk">—</div>
+          <div class="wp" id="wday">—</div>
+        </div>
+      </div>
+      <div class="dv"></div>
+      <div class="stats">
+        <div><div class="lbl">Elapsed</div><div class="sv" id="el">—</div></div>
+        <div><div class="lbl">Remaining</div><div class="sv" id="rm">—</div></div>
+        <div><div class="lbl">Month length</div><div class="sv" id="ml">—</div></div>
+      </div>
+      <div class="pt"><div class="pf" id="pf" style="width:0%"></div></div>
+    </div>
+    <div class="card">
+      <div class="lbl">Namaaz Times · Ontario CA</div>
+      <div class="nr"><span class="nn">Fajr</span><span class="nt" id="p1">—</span></div>
+      <div class="nr"><span class="nn">Sunrise</span><span class="nt" id="p2">—</span></div>
+      <div class="nr"><span class="nn">Zuhr</span><span class="nt" id="p3">—</span></div>
+      <div class="nr"><span class="nn">Asr</span><span class="nt" id="p4">—</span></div>
+      <div class="nr"><span class="nn">Maghrib</span><span class="nt" id="p5">—</span></div>
+      <div class="nr"><span class="nn">Isha</span><span class="nt" id="p6">—</span></div>
+    </div>
+  </div>
+  <div class="col">
+    <div class="card">
+      <div class="mt" id="mtitle">—</div>
+      <div class="cal" id="cal">
+        <div class="dw">Su</div><div class="dw">Mo</div><div class="dw">Tu</div>
+        <div class="dw">We</div><div class="dw">Th</div><div class="dw">Fr</div><div class="dw">Sa</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="lbl">Upcoming Miqaats</div>
+      <div id="mqlist"><div class="empty">Loading…</div></div>
+    </div>
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+        <div class="lbl" style="margin-bottom:0">Notes</div>
+        <button onclick="aN()">+ Add</button>
+      </div>
+      <div id="nl"></div>
+      <div id="na" style="display:none;margin-top:8px;">
+        <input type="text" id="ni" placeholder="Type a note…"/>
+        <div class="br">
+          <button onclick="sN()" style="flex:1">Save</button>
+          <button onclick="cN()" style="flex:1">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── Bohra Misri Hijri conversion ─────────────────────────────────────────
+// Anchor verified: June 26 2026 = 12 Muharram 1448H (mumineencalendar.com)
+function gJD(y,m,d){
+  if(m<3){y--;m+=12;}
+  const A=Math.floor(y/100),B=2-A+Math.floor(A/4);
+  return Math.floor(365.25*(y+4716))+Math.floor(30.6001*(m+1))+d+B-1524;
+}
+function jdToH(jd){
+  const ec=1948085,iy=10631/30,s=8.01/60;
+  let z=jd-ec,cyc=Math.floor(z/10631);
+  z-=10631*cyc;
+  const j=Math.floor((z-s)/iy),yr=30*cyc+j;
+  z-=Math.floor(j*iy+s);
+  let im=Math.floor((z+28.5001)/29.5);
+  if(im===13)im=12;
+  const id=z-Math.floor(29.5001*im-29);
+  return{y:yr,m:im,d:id};
+}
+// Auto-calibrate offset so Jun 26 2026 → 12 Muharram 1448H
+const AJD=gJD(2026,6,26);
+let OFF=0;
+for(let o=-4;o<=4;o++){
+  const t=jdToH(AJD+o);
+  if(t.y===1448&&t.m===1&&t.d===12){OFF=-o;break;}
+}
+function g2h(y,m,d){return jdToH(gJD(y,m,d)+OFF);}
+
+const LEAP=new Set([2,5,7,10,13,15,18,21,24,26,29]);
+function mLen(m,y){
+  if(m%2===1)return 30;
+  if(m===12&&LEAP.has(((y-1)%30)+1))return 30;
+  return 29;
+}
+
+const MN=['Muharram','Safar','Rabi al-Awwal','Rabi al-Akhir','Jumada al-Ula',
+  'Jumada al-Akhira','Rajab','Shaaban','Ramadan','Shawwal','Dhul Qadah','Dhul Hijjah'];
+const MS=['Muh','Saf','R.Aw','R.Ak','J.Ul','J.Ak','Raj','Sha','Ram','Shaw','D.Q','D.H'];
+
+// ── Miqaats ───────────────────────────────────────────────────────────────
+const MQ=[
+  {m:1,d:1,n:'Ras al-Sana — New Year',t:'miqaat'},
+  {m:1,d:10,n:'Ashura',t:'miqaat'},
+  {m:2,d:20,n:'Arbaeen',t:'miqaat'},
+  {m:3,d:12,n:'Milad an-Nabi \u218a',t:'milad'},
+  {m:3,d:17,n:'Wafat an-Nabi \u218a',t:'miqaat'},
+  {m:7,d:1,n:'Ghurrat Rajab',t:'miqaat'},
+  {m:7,d:13,n:'Milad Imam Ali AS',t:'milad'},
+  {m:7,d:27,n:'Laylat al-Miraj',t:'miqaat'},
+  {m:8,d:15,n:'Laylat al-Baraat',t:'miqaat'},
+  {m:9,d:1,n:'Ghurrat Ramadan',t:'miqaat'},
+  {m:9,d:21,n:'Shahadat Imam Ali AS',t:'miqaat'},
+  {m:9,d:27,n:'Laylat al-Qadr',t:'miqaat'},
+  {m:10,d:1,n:'Eid al-Fitr',t:'eid'},
+  {m:12,d:10,n:'Eid al-Adha',t:'eid'},
+  {m:12,d:18,n:'Eid al-Ghadeer',t:'eid'},
+];
+
+// ── Namaaz times (Ontario CA: lat 34.0633, lng -117.6509) ─────────────────
+function calcN(dt,lat,lng){
+  const Y=dt.getFullYear(),M=dt.getMonth()+1,D=dt.getDate();
+  const jd=gJD(Y,M,D),n=jd-2451545;
+  const R=x=>x*Math.PI/180,De=x=>x*180/Math.PI;
+  const L=(280.46+0.9856474*n)%360;
+  const g=R((357.528+0.9856003*n)%360);
+  const lam=R(L+1.915*Math.sin(g)+0.02*Math.sin(2*g));
+  const ep=R(23.439-0.0000004*n);
+  const sD=Math.sin(ep)*Math.sin(lam),dec=Math.asin(sD),cD=Math.cos(dec);
+  const RA=De(Math.atan2(Math.cos(ep)*Math.sin(lam),Math.cos(lam)))/15;
+  const GMST=(6.697375+0.0657098242*n)%24;
+  const LST=(GMST+lng/15+24)%24;
+  const sNo=((RA-LST+24)%24+12)%24;
+  const tz=-dt.getTimezoneOffset()/60;
+  const lN=sNo+tz;
+  const ha=alt=>{
+    const c=(Math.sin(R(alt))-Math.sin(R(lat))*sD)/(Math.cos(R(lat))*cD);
+    return(c<-1||c>1)?null:De(Math.acos(c))/15;
+  };
+  const fmt=h=>{
+    if(h==null)return'—';
+    h=((h%24)+24)%24;
+    const hr=Math.floor(h),mn=Math.round((h-hr)*60);
+    return`${hr%12||12}:${String(mn).padStart(2,'0')} ${hr<12?'am':'pm'}`;
+  };
+  const asrAlt=De(Math.atan(1/(1+Math.tan(Math.abs(R(lat)-dec)))));
+  return[
+    fmt(lN-(ha(-18)||0)),
+    fmt(lN-(ha(-0.833)||0)),
+    fmt(lN+0.05),
+    fmt(lN+(ha(asrAlt)||0)),
+    fmt(lN+(ha(-0.833)||0)),
+    fmt(lN+(ha(-18)||0)),
+  ];
+}
+
+// ── Notes (persisted in localStorage) ────────────────────────────────────
+let notes=[];
+try{const s=localStorage.getItem('bohra_notes');if(s)notes=JSON.parse(s);}catch(e){}
+function saveNotes(){try{localStorage.setItem('bohra_notes',JSON.stringify(notes));}catch(e){}}
+function rNotes(){
+  const el=document.getElementById('nl');
+  el.innerHTML=notes.length
+    ?notes.map((n,i)=>`<div class="ni2"><span>${n}</span><span onclick="dN(${i})" style="cursor:pointer;color:#8b949e;font-size:14px;">✕</span></div>`).join('')
+    :'<div class="empty">No notes yet.</div>';
+}
+function aN(){document.getElementById('na').style.display='block';document.getElementById('ni').focus();}
+function cN(){document.getElementById('na').style.display='none';document.getElementById('ni').value='';}
+function sN(){const v=document.getElementById('ni').value.trim();if(v){notes.push(v);saveNotes();rNotes();}cN();}
+function dN(i){notes.splice(i,1);saveNotes();rNotes();}
+document.getElementById('ni').addEventListener('keydown',e=>{if(e.key==='Enter')sN();if(e.key==='Escape')cN();});
+
+// ── Clock ─────────────────────────────────────────────────────────────────
+function uClk(){
+  const n=new Date(),h=n.getHours(),m=n.getMinutes();
+  document.getElementById('clk').textContent=`${h%12||12}:${String(m).padStart(2,'0')} ${h<12?'am':'pm'}`;
+}
+setInterval(uClk,15000);uClk();
+
+// Auto-refresh at midnight so date rolls over
+function msUntilMidnight(){const n=new Date(),t=new Date(n);t.setHours(24,0,0,0);return t-n;}
+setTimeout(()=>{render();setInterval(render,86400000);},msUntilMidnight());
+
+const WD=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+
+// ── Main render ───────────────────────────────────────────────────────────
+function render(){
+  const now=new Date(),Y=now.getFullYear(),M=now.getMonth()+1,D=now.getDate();
+  const hd=g2h(Y,M,D),ml=mLen(hd.m,hd.y),rm=ml-hd.d,pct=Math.round(hd.d/ml*100);
+
+  document.getElementById('hd').textContent=`${hd.d} ${MN[hd.m-1]}`;
+  document.getElementById('hy').textContent=`${hd.y}H`;
+  document.getElementById('gf').textContent=now.toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  document.getElementById('wday').textContent=WD[now.getDay()];
+  document.getElementById('el').textContent=hd.d;
+  document.getElementById('rm').textContent=rm;
+  document.getElementById('ml').textContent=ml;
+  document.getElementById('pf').style.width=pct+'%';
+  document.getElementById('mtitle').textContent=`${MN[hd.m-1]} ${hd.y}H`;
+
+  const nt=calcN(now,34.0633,-117.6509);
+  ['p1','p2','p3','p4','p5','p6'].forEach((id,i)=>document.getElementById(id).textContent=nt[i]);
+
+  buildCal(hd,now,Y,M,D,ml);
+  buildMiq(hd,now,Y,M,D);
+  rNotes();
+}
+
+function buildCal(hd,now,Y,M,D,ml){
+  const miqD=new Set(MQ.filter(q=>q.m===hd.m).map(q=>q.d));
+  let greg1=null;
+  for(let o=-(hd.d+3);o<=3;o++){
+    const fd=new Date(now);fd.setDate(D+o);
+    const fh=g2h(fd.getFullYear(),fd.getMonth()+1,fd.getDate());
+    if(fh.y===hd.y&&fh.m===hd.m&&fh.d===1){greg1=fd;break;}
+  }
+  if(!greg1)return;
+  const grid=document.getElementById('cal');
+  while(grid.children.length>7)grid.removeChild(grid.lastChild);
+  for(let i=0;i<greg1.getDay();i++){
+    const e=document.createElement('div');e.className='dc';grid.appendChild(e);
+  }
+  for(let d=1;d<=ml;d++){
+    const gd=new Date(greg1);gd.setDate(greg1.getDate()+d-1);
+    const cell=document.createElement('div');
+    const cls=['dc'];
+    if(d===hd.d)cls.push('today');
+    if(miqD.has(d))cls.push('miq');
+    cell.className=cls.join(' ');
+    cell.innerHTML=`<span class="g">${gd.getDate()}</span><span class="h">${d}</span>`;
+    cell.title=`${d} ${MN[hd.m-1]} ${hd.y}H`;
+    grid.appendChild(cell);
+  }
+}
+
+function buildMiq(hd,now,Y,M,D){
+  const up=[];
+  for(let delta=0;delta<=90&&up.length<6;delta++){
+    const fd=new Date(now);fd.setDate(D+delta);
+    const fh=g2h(fd.getFullYear(),fd.getMonth()+1,fd.getDate());
+    MQ.forEach(q=>{
+      if(q.m===fh.m&&q.d===fh.d){
+        up.push({...q,hs:`${fh.d} ${MS[fh.m-1]} ${fh.y}H`,da:delta});
+      }
+    });
+  }
+  document.getElementById('mqlist').innerHTML=up.length
+    ?up.map(q=>`<div class="mi">
+        <div class="mw">${q.hs} · ${q.da===0?'<b>Today</b>':q.da===1?'Tomorrow':`in ${q.da} days`}</div>
+        <div class="mn">${q.n}</div>
+        <span class="mb ${q.t}">${q.t.charAt(0).toUpperCase()+q.t.slice(1)}</span>
+      </div>`).join('')
+    :'<div class="empty">None in next 90 days</div>';
+}
+
+render();
+</script>
+</body>
+</html>
